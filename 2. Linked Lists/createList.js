@@ -5,7 +5,7 @@ module.exports = function createList(values) {
     // Create the head node
     const head = new LLNode(values[0]);
 
-    // Loop through the remaining values, creating them as lists
+    // Loop through the remaining values, creating them as nodes and linking them
     var node = head;
     for (var index = 1; index < values.length; index++) {
         var newNode = new LLNode(values[index]);
