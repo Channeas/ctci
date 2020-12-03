@@ -1,5 +1,5 @@
-// Custom implementation of a Stack (I know, it shouldn't use an Array...)
-class Stack {
+// Lazy implementation of a Stack
+class LazyStack {
     constructor() {
         this._store = [];
     }
@@ -27,5 +27,49 @@ class Stack {
     // Method for retrieving the size of the stack
     size() {
         return this._store.length;
+    }
+}
+
+// Proper Stack
+module.exports = class Stack {
+    constructor() {
+        this.top = null;
+    }
+
+    // Method for adding items
+    push(item) {
+        var newTop = new llNode(item);
+        newTop.next = this.top;
+        this.top = newTop;
+    }
+
+    // Method for retrieving items
+    pop() {
+        if (this.isEmpty()) {
+            return null;
+        }
+        var node = this.top;
+        this.top = this.top.next;
+        return node.val;
+    }
+
+    // Method for retrieving but not removing items
+    peek() {
+        if (this.isEmpty()) {
+            return null;
+        }
+        return this.top.val;
+    }
+
+    // Method for checking if the stack is empty
+    isEmpty() {
+        return this.top == null;
+    }
+};
+
+class llNode {
+    constructor(val) {
+        this.val = val;
+        this.next = null;
     }
 }
