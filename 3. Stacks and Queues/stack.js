@@ -1,3 +1,5 @@
+const LLNode = require("./LLNode");
+
 // Lazy implementation of a Stack
 class LazyStack {
     constructor() {
@@ -38,7 +40,7 @@ module.exports = class Stack {
 
     // Method for adding items
     push(item) {
-        var newTop = new llNode(item);
+        var newTop = new LLNode(item);
         newTop.next = this.top;
         this.top = newTop;
     }
@@ -66,10 +68,3 @@ module.exports = class Stack {
         return this.top == null;
     }
 };
-
-class llNode {
-    constructor(val) {
-        this.val = val;
-        this.next = null;
-    }
-}
