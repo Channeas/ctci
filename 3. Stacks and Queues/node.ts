@@ -1,5 +1,3 @@
-import { AnyARecord } from "dns";
-
 // Linked list node
 export default class MyNode {
     next: MyNode;
