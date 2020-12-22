@@ -6,7 +6,12 @@ export default class MinHeap {
         // Declare properties
         this._root = null;
         this._size = 0;
-        this._levels = 0;
+
+        // How many nodes there can be at the bottom row
+        this._bottomCapacity = 1;
+
+        // How many nodes there are at the bottom row
+        this._bottomCount = 0;
 
         // Insert the starting nodes
         for (var value in values) {
@@ -20,18 +25,15 @@ export default class MinHeap {
         if (this._size == 0) {
             // If it is, insert the value as the root
             this._root = new HeapNode(value, null);
-            this._size++;
+            this._incrementCount();
             return;
         }
 
-        // Calculate how many levels there are
-        var levels = this._calculateLevels(this._size);
+        // Get the capacity of the bottom row
+        var bottomCapacity = this._bottomCapacity;
 
-        // Calculate the capacity of the bottom row
-        var bottomCapacity = Math.pow(2, levels - 1);
-
-        // Calculate how many nodes there actually are on the bottom row
-        var bottomCount = this._calculateBottomCount(this._size);
+        // Get how many nodes there are in the bottom row
+        var bottomCount = this._bottomCount;
 
         var node = this._root,
             newNode = new HeapNode(value, null);
@@ -61,7 +63,7 @@ export default class MinHeap {
         }
 
         // Increase the stored size of the heap
-        this._size++;
+        this._incrementCount();
 
         // Bubble up the new value
         this._bubbleUp(newNode);
@@ -79,7 +81,7 @@ export default class MinHeap {
             // If it is, make sure to clear the tree
             var val = this._root.val;
             this._root = null;
-            this._size--;
+            this._decrementCount();
             return val;
         }
 
@@ -103,7 +105,7 @@ export default class MinHeap {
         this._bubbleDown(this._root);
 
         // Return the stored minimum value
-        this._size--;
+        this._decrementCount();
         return minVal;
     }
 
@@ -144,45 +146,38 @@ export default class MinHeap {
         }
     }
 
-    // Internal method for calculating how many levels there are in the tree
-    _calculateLevels(nodeCount) {
-        var power = 0,
-            val = 1;
+    // Internal function for storing that a node has been added
+    _incrementCount() {
+        this._size++;
+        this._bottomCount++;
 
-        // Keep subtracting the increasing power of 2 until there are no nodes left
-        while (nodeCount >= val) {
-            val *= 2;
-            power++;
+        // Potentially move to a new layer
+        if (this._bottomCount >= this._bottomCapacity) {
+            this._bottomCapacity *= 2;
+            this._bottomCount = 0;
         }
-
-        return power;
     }
 
-    // Internal method for calculating how many nodes there are on the bottom level
-    _calculateBottomCount(nodeCount) {
-        var left = nodeCount,
-            levelCount = 1;
+    // Internal function for storing that a node has been extracted
+    _decrementCount() {
+        this._size--;
 
-        // Remove the capacity at each level until there are no nodes left
-        while (left >= 0) {
-            left -= levelCount;
-            levelCount *= 2;
+        // Potentially move to the previous layer
+        if (this._bottomCount <= 0) {
+            this._bottomCapacity /= 2;
+            this._bottomCount = this._bottomCapacity - 1;
+        } else {
+            this._bottomCount--;
         }
-
-        // Then return the previous value
-        return levelCount / 2 + left;
     }
 
     // Internal method for retrieving the newest node
     _getNewestNode() {
-        // Calculate how many levels there are
-        var levels = this._calculateLevels(this._size);
+        // Get the capacity of the bottom row
+        var bottomCapacity = this._bottomCapacity;
 
-        // Calculate the capacity of the bottom row
-        var bottomCapacity = Math.pow(2, levels - 1);
-
-        // Calculate how many nodes there actually are on the bottom row
-        var bottomCount = this._calculateBottomCount(this._size);
+        // Get how many nodes there are in the bottom row
+        var bottomCount = this._bottomCount;
 
         var node = this._root;
         while (true) {
