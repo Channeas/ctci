@@ -2,8 +2,15 @@ import GraphNode from "./GraphNode.js";
 
 // Graph holding class
 export default class Graph {
-    constructor() {
+    constructor(type = "directed") {
         this._nodes = [];
+
+        // Make sure a valid graph type was passed (directed or undirected)
+        if (type == "directed" || type == "undirected") {
+            this._type = type;
+        } else {
+            throw "Unknown graph type. Must be eithed directed or undirected";
+        }
     }
 
     // Method for adding new nodes
@@ -28,6 +35,16 @@ export default class Graph {
                 this.removeEdge(node, node.edges[0]);
             }
 
+            // Potentially remove edges pointing to this node
+            if (this._type == "directed") {
+                // Loop through all the other nodes
+                for (var source of this._nodes) {
+                    if (source.edges.includes(node)) {
+                        this.removeEdge(source, node);
+                    }
+                }
+            }
+
             // Then remove the node
             this._nodes.splice(index, 1);
         }
@@ -39,7 +56,11 @@ export default class Graph {
         if (this._nodes.includes(node1) && this._nodes.includes(node2)) {
             // If they do, add the edge
             node1.addEdge(node2);
-            node2.addEdge(node1);
+
+            // Potentially add an undirected edge
+            if (this._type == "undirected") {
+                node2.addEdge(node1);
+            }
 
             return true;
         }
@@ -52,7 +73,11 @@ export default class Graph {
         // Make sure both nodes exist
         if (this._nodes.includes(node1) && this._nodes.includes(node2)) {
             node1.removeEdge(node2);
-            node2.removeEdge(node1);
+
+            // Potentially remove an undirected edge
+            if (this._type == "undirected") {
+                node2.removeEdge(node1);
+            }
 
             return true;
         }
